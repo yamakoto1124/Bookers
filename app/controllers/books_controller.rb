@@ -1,49 +1,53 @@
- class BooksController < ApplicationController
-   def new
+class BooksController < ApplicationController
+  
 
-    @book = Book.new
-
-   end
-
-   def create
+  def create
     @book = Book.new(book_params)
 
    if @book.save
-    redirect_to book_path(@book.id)
+    redirect_to book_path(@book.id), notice: 'Book was successfully created.'
 
    else
+    @books =Book.all
     render :new, status: :unprocessable_entity
    end
-   end
+  end
 
-   def index
+  def index
     @books = Book.all
-   end
+    @book = Book.new
+  end
 
-   def show
+  def show
     @book = Book.find(params[:id])
-   end
+  end
 
-   def edit
+  def edit
     @book = Book.find(params[:id])
+  end
+
+  def update
+      @book = Book.find(params[:id])
+   if @book.update(book_params)
+      flash[:notice] = "book was successfully updated."
+      redirect_to book_path(@book.id)
+  
+
+   else
+    render :edit, status: :unprocessable_entity
    end
 
-   def update
-    book = Book.find(params[:id])
-    book.update(book_params)
-    redirect_to book_path(book.id)
+  end
 
-   end
-
-   def destroy
+  def destroy
     book = Book.find(params[:id])
     book.destroy
-    redirect_to 'books'
-   end
+    redirect_to books_path
+  end
 
-   private
+  private
 
-   def book_params
+  def book_params
     params.require(:book).permit(:title, :body)
-   end
- end
+  end
+end
